@@ -164,13 +164,17 @@ export async function fetchInvoiceById(id: string) {
       WHERE invoices.id = ${id};
     `;
 
-    const invoice = data.rows.map((invoice) => ({
-      ...invoice,
-      // Convert amount from cents to dollars
-      amount: invoice.amount / 100,
-    }));
+    if (data.rows.length === 0) {
+      return null; // Invoice tidak ditemukan
+    }
 
-    return invoice[0];
+    const invoice = {
+      ...data.rows[0],
+      // Convert amount from cents to dollars
+      amount: data.rows[0].amount / 100,
+    };
+
+    return invoice;
   } catch (error) {
     console.error("Database Error:", error);
   }
